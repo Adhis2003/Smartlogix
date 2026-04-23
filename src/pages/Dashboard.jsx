@@ -1,345 +1,325 @@
-// // src/pages/Dashboard.jsx
-// import React from "react";
-// import {
-//   LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
-//   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-// } from "recharts";
-// import { mockData } from "../data/mockData";
-// import { fmt } from "../utils/helpers";
-// import { StatusBadge } from "../Components/ui/StatusBadge";
-
-// const Dashboard = () => {
-//   const s = mockData.stats;
-
-//   return (
-//     <div className="page-content">
-//       {/* Live bar */}
-//       <div
-//         className="flex items-center gap-3 mb-4"
-//         style={{ padding: "10px 16px", background: "var(--green-dim)", border: "1px solid #10b98130", borderRadius: 10 }}
-//       >
-//         <span className="live-dot"></span>
-//         <span style={{ fontSize: 13, fontWeight: 600, color: "var(--green)" }}>Live Dashboard</span>
-//         <span style={{ fontSize: 12, color: "var(--text-muted)" }}>
-//           — {s.activeTrips} trips in progress · {s.driversOnline} drivers online · Last updated just now
-//         </span>
-//         <span style={{ marginLeft: "auto", fontSize: 12, color: "var(--text-muted)" }}>
-//           Jan 20, 2025 · 09:42 AM IST
-//         </span>
-//       </div>
-
-//       {/* Stat Cards */}
-//       <div className="stats-grid">
-//         {[
-//           { label: "Active Trips",       val: s.activeTrips,               icon: "🚛", change: "+2 from yesterday",    up: true,  cls: "orange" },
-//           { label: "Drivers Online",     val: s.driversOnline,             icon: "👤", change: "+5 from last week",    up: true,  cls: "green"  },
-//           { label: "Monthly Revenue",    val: "₹" + fmt(s.monthlyRevenue), icon: "₹",  change: "+14% vs last month",   up: true,  cls: "blue"   },
-//           { label: "Fleet Utilization",  val: s.fleetUtilization + "%",    icon: "⚡", change: "-3% vs last week",     up: false, cls: "purple" },
-//           { label: "Total Trucks",       val: s.totalTrucks,               icon: "🏗", change: "2 in maintenance",      up: false, cls: "yellow" },
-//           { label: "Pending POD",        val: s.pendingPOD,                icon: "📄", change: "Needs attention",       up: false, cls: "orange" },
-//           { label: "Total Customers",    val: s.totalCustomers,            icon: "🤝", change: "+8 this month",         up: true,  cls: "green"  },
-//           { label: "Total Revenue",      val: "₹" + fmt(s.totalRevenue),   icon: "💰", change: "All time",              up: true,  cls: "blue"   },
-//         ].map(({ label, val, icon, change, up, cls }) => (
-//           <div key={label} className={`stat-card ${cls}`}>
-//             <div className="stat-label">{label}</div>
-//             <div className="stat-value">{val}</div>
-//             <div className={`stat-change ${up ? "up" : "down"}`}>
-//               {up ? "↑" : "↓"} {change}
-//             </div>
-//             <div className="stat-icon">{icon}</div>
-//           </div>
-//         ))}
-//       </div>
-
-//       {/* Charts Row 1 */}
-//       <div className="grid-3-2">
-//         <div className="card">
-//           <div className="card-header">
-//             <div>
-//               <div className="card-title">Revenue & Profit Trend</div>
-//               <div className="card-subtitle">Last 6 months (INR)</div>
-//             </div>
-//           </div>
-//           <div className="card-body">
-//             <ResponsiveContainer width="100%" height={220}>
-//               <LineChart data={mockData.revenue}>
-//                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
-//                 <XAxis dataKey="month" tick={{ fill: "var(--text-muted)", fontSize: 11 }} axisLine={false} tickLine={false} />
-//                 <YAxis tick={{ fill: "var(--text-muted)", fontSize: 11 }} axisLine={false} tickLine={false} tickFormatter={(v) => "₹" + v / 1000 + "k"} />
-//                 <Tooltip
-//                   contentStyle={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 12 }}
-//                   formatter={(v, n) => ["₹" + fmt(v), n.charAt(0).toUpperCase() + n.slice(1)]}
-//                 />
-//                 <Line type="monotone" dataKey="revenue"  stroke="#f97316" strokeWidth={2.5} dot={false} />
-//                 <Line type="monotone" dataKey="profit"   stroke="#10b981" strokeWidth={2.5} dot={false} strokeDasharray="4 4" />
-//                 <Line type="monotone" dataKey="expenses" stroke="#ef4444" strokeWidth={1.5} dot={false} strokeDasharray="2 2" />
-//               </LineChart>
-//             </ResponsiveContainer>
-//             <div className="flex gap-4 mt-2" style={{ justifyContent: "center" }}>
-//               {[["#f97316","Revenue"],["#10b981","Profit"],["#ef4444","Expenses"]].map(([c, l]) => (
-//                 <span key={l} className="flex items-center gap-2 text-xs text-muted">
-//                   <span style={{ width: 12, height: 3, background: c, borderRadius: 2, display: "inline-block" }}></span>
-//                   {l}
-//                 </span>
-//               ))}
-//             </div>
-//           </div>
-//         </div>
-
-//         <div className="card">
-//           <div className="card-header"><div className="card-title">Fleet Status</div></div>
-//           <div className="card-body" style={{ paddingTop: 10 }}>
-//             <ResponsiveContainer width="100%" height={160}>
-//               <PieChart>
-//                 <Pie data={mockData.fleetPie} cx="50%" cy="50%" innerRadius={50} outerRadius={75} paddingAngle={3} dataKey="value">
-//                   {mockData.fleetPie.map((e, i) => <Cell key={i} fill={e.color} />)}
-//                 </Pie>
-//                 <Tooltip contentStyle={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 12 }} />
-//               </PieChart>
-//             </ResponsiveContainer>
-//             {mockData.fleetPie.map((e) => (
-//               <div key={e.name} className="flex items-center justify-between" style={{ marginBottom: 8 }}>
-//                 <div className="flex items-center gap-2">
-//                   <span style={{ width: 10, height: 10, background: e.color, borderRadius: "50%", display: "inline-block" }}></span>
-//                   <span className="text-sm text-secondary">{e.name}</span>
-//                 </div>
-//                 <div className="flex items-center gap-3">
-//                   <div className="progress-bar" style={{ width: 80 }}>
-//                     <div className="progress-fill" style={{ width: (e.value / 47 * 100) + "%", background: e.color }}></div>
-//                   </div>
-//                   <span className="text-sm font-semibold">{e.value}</span>
-//                 </div>
-//               </div>
-//             ))}
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* Charts Row 2 + Live Trips */}
-//       <div className="grid-2-1">
-//         <div className="card">
-//           <div className="card-header"><div className="card-title">Trip Volume — This Week</div></div>
-//           <div className="card-body">
-//             <ResponsiveContainer width="100%" height={200}>
-//               <BarChart data={mockData.tripVolume} barSize={28}>
-//                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-//                 <XAxis dataKey="day" tick={{ fill: "var(--text-muted)", fontSize: 11 }} axisLine={false} tickLine={false} />
-//                 <YAxis tick={{ fill: "var(--text-muted)", fontSize: 11 }} axisLine={false} tickLine={false} />
-//                 <Tooltip contentStyle={{ background: "var(--bg-card)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 12 }} cursor={{ fill: "var(--border)" }} />
-//                 <Bar dataKey="trips" fill="#f97316" radius={[4, 4, 0, 0]} />
-//               </BarChart>
-//             </ResponsiveContainer>
-//           </div>
-//         </div>
-
-//         <div className="card" style={{ overflow: "hidden" }}>
-//           <div className="card-header">
-//             <div className="card-title">Live Trips</div>
-//             <span className="badge blue">{s.activeTrips} Active</span>
-//           </div>
-//           <div style={{ overflowY: "auto", maxHeight: 260 }}>
-//             {mockData.trips.filter((t) => t.status === "in_progress").map((t) => (
-//               <div key={t.id} className="trip-item">
-//                 <div className="trip-route">
-//                   <span className="trip-city" style={{ fontSize: 12, fontWeight: 700 }}>{t.from}</span>
-//                   <span className="trip-arrow">→</span>
-//                   <span className="trip-city" style={{ fontSize: 12, fontWeight: 700 }}>{t.to}</span>
-//                 </div>
-//                 <div className="trip-meta">
-//                   <span>🚛 {t.truck}</span>
-//                   <span>👤 {t.driver}</span>
-//                   <span>📏 {t.dist}</span>
-//                 </div>
-//                 <div className="flex items-center justify-between mt-2">
-//                   <span className="text-xs text-muted">ETA: {t.eta}</span>
-//                   <span className="text-xs text-accent font-semibold">₹{fmt(t.freight)}</span>
-//                 </div>
-//               </div>
-//             ))}
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* Bottom Row */}
-//       <div className="grid-2">
-//         <div className="card">
-//           <div className="card-header">
-//             <div className="card-title">Subscription Plans</div>
-//             <span className="text-sm text-accent font-semibold">134 paying</span>
-//           </div>
-//           <div className="card-body" style={{ paddingTop: 12 }}>
-//             {mockData.plans.map((p) => (
-//               <div key={p.name} className="metric-row">
-//                 <div>
-//                   <div className="font-semibold" style={{ fontSize: 13 }}>{p.name}</div>
-//                   <div className="text-xs text-muted">{p.trucks} · ₹{fmt(p.price)}/mo</div>
-//                 </div>
-//                 <div className="flex items-center gap-3">
-//                   <div className="progress-bar" style={{ width: 80 }}>
-//                     <div className="progress-fill" style={{ width: (p.customers / 134 * 100) + "%", background: "var(--accent)" }}></div>
-//                   </div>
-//                   <span className="font-semibold text-sm">{p.customers}</span>
-//                 </div>
-//               </div>
-//             ))}
-//           </div>
-//         </div>
-
-//         <div className="card">
-//           <div className="card-header">
-//             <div className="card-title">Pending Actions</div>
-//             <span className="badge red">8 Urgent</span>
-//           </div>
-//           <div className="card-body" style={{ paddingTop: 12 }}>
-//             {[
-//               { icon: "📄", title: "POD Verification Pending",  sub: "8 trips awaiting delivery confirmation", urgent: true  },
-//               { icon: "⚠️", title: "Expense Approvals",         sub: "2 expenses pending review",               urgent: true  },
-//               { icon: "🔧", title: "TN04 GH 3456 in Maintenance", sub: "Service due since yesterday",           urgent: false },
-//               { icon: "📋", title: "Invoice Generation",        sub: "3 completed trips, invoices not sent",    urgent: false },
-//             ].map((a, i) => (
-//               <div key={i} className="flex gap-3" style={{ padding: "10px 0", borderBottom: i < 3 ? "1px solid var(--border)" : "none" }}>
-//                 <span style={{ fontSize: 18 }}>{a.icon}</span>
-//                 <div style={{ flex: 1 }}>
-//                   <div className="flex items-center gap-2">
-//                     <span style={{ fontSize: 13, fontWeight: 600 }}>{a.title}</span>
-//                     {a.urgent && <span className="badge red" style={{ fontSize: 10 }}>Urgent</span>}
-//                   </div>
-//                   <div className="text-xs text-muted mt-1">{a.sub}</div>
-//                 </div>
-//               </div>
-//             ))}
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Dashboard;
-
-
-
-
-
-
-
-import React from "react";
+import React, { useMemo } from "react";
 import {
   LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from "recharts";
+import {
+  Truck, Users, IndianRupee, Zap, Package, FileText,
+  Handshake, TrendingUp, Wrench, AlertTriangle, Clock,
+  ArrowUpRight, ArrowDownRight, Activity, MapPin,
+} from "lucide-react";
 import { mockData } from "../data/mockData";
 import { fmt } from "../utils/helpers";
 
+/* ─── Helpers ────────────────────────────────────────────── */
+const now = new Date();
+const dateStr = now.toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+const timeStr = now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", hour12: true });
+
+const CHART_TOOLTIP_STYLE = {
+  contentStyle: {
+    background: "#1f2937",
+    border: "1px solid #374151",
+    borderRadius: 8,
+    fontSize: 12,
+    color: "#f9fafb",
+  },
+};
+
+/* ─── Stat Card ──────────────────────────────────────────── */
+const STAT_ACCENT = {
+  orange: { ring: "ring-orange-500/20", icon: "bg-orange-500/10 text-orange-400", text: "text-orange-400" },
+  green:  { ring: "ring-green-500/20",  icon: "bg-green-500/10  text-green-400",  text: "text-green-400"  },
+  blue:   { ring: "ring-blue-500/20",   icon: "bg-blue-500/10   text-blue-400",   text: "text-blue-400"   },
+  purple: { ring: "ring-purple-500/20", icon: "bg-purple-500/10 text-purple-400", text: "text-purple-400" },
+  yellow: { ring: "ring-yellow-500/20", icon: "bg-yellow-500/10 text-yellow-400", text: "text-yellow-400" },
+};
+
+const StatCard = ({ label, val, Icon, change, up, color = "orange" }) => {
+  const ac = STAT_ACCENT[color] ?? STAT_ACCENT.orange;
+  return (
+    <div className={`relative bg-gray-800/70 border border-gray-700/80 ring-1 ${ac.ring}
+      rounded-xl p-4 flex flex-col gap-2 hover:bg-gray-800 transition-colors duration-200 group overflow-hidden`}>
+
+      {/* subtle gradient glow */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300
+        bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
+
+      <div className="flex items-start justify-between">
+        <span className="text-xs font-medium text-gray-400 tracking-wide">{label}</span>
+        <div className={`p-1.5 rounded-lg ${ac.icon}`}>
+          <Icon size={14} strokeWidth={2} />
+        </div>
+      </div>
+
+      <div className="text-2xl font-bold text-white leading-tight">{val}</div>
+
+      <div className={`flex items-center gap-1 text-[11px] font-medium ${up ? "text-green-400" : "text-red-400"}`}>
+        {up
+          ? <ArrowUpRight size={12} strokeWidth={2.5} />
+          : <ArrowDownRight size={12} strokeWidth={2.5} />}
+        {change}
+      </div>
+    </div>
+  );
+};
+
+/* ─── Section Title ──────────────────────────────────────── */
+const SectionTitle = ({ children, aside }) => (
+  <div className="flex items-center justify-between mb-3">
+    <h2 className="text-sm font-semibold text-white tracking-tight">{children}</h2>
+    {aside && <span className="text-xs text-gray-500">{aside}</span>}
+  </div>
+);
+
+/* ─── Card wrapper ───────────────────────────────────────── */
+const Card = ({ children, className = "" }) => (
+  <div className={`bg-gray-800/70 border border-gray-700/80 rounded-xl p-4 ${className}`}>
+    {children}
+  </div>
+);
+
+/* ─── Custom Tooltip for recharts ────────────────────────── */
+const RevTooltip = ({ active, payload, label }) => {
+  if (!active || !payload?.length) return null;
+  return (
+    <div className="bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-xs shadow-xl">
+      <p className="text-gray-400 mb-1 font-medium">{label}</p>
+      {payload.map((p) => (
+        <p key={p.dataKey} style={{ color: p.stroke }} className="font-semibold">
+          {p.name.charAt(0).toUpperCase() + p.name.slice(1)}: ₹{fmt(p.value)}
+        </p>
+      ))}
+    </div>
+  );
+};
+
+/* ─── Dashboard ──────────────────────────────────────────── */
 const Dashboard = () => {
   const s = mockData.stats;
 
-  return (
-    <div className="p-4 bg-gray-900 min-h-screen text-white">
+  const statCards = useMemo(() => [
+    { label: "Active Trips",      val: s.activeTrips,               Icon: Truck,      change: "+2 from yesterday",  up: true,  color: "orange" },
+    { label: "Drivers Online",    val: s.driversOnline,             Icon: Users,      change: "+5 from last week",  up: true,  color: "green"  },
+    { label: "Monthly Revenue",   val: "₹" + fmt(s.monthlyRevenue), Icon: IndianRupee,change: "+14% vs last month", up: true,  color: "blue"   },
+    { label: "Fleet Utilization", val: s.fleetUtilization + "%",    Icon: Zap,        change: "−3% vs last week",   up: false, color: "purple" },
+    { label: "Total Trucks",      val: s.totalTrucks,               Icon: Truck,      change: "2 in maintenance",   up: false, color: "yellow" },
+    { label: "Pending POD",       val: s.pendingPOD,                Icon: FileText,   change: "Needs attention",    up: false, color: "orange" },
+    { label: "Total Customers",   val: s.totalCustomers,            Icon: Handshake,  change: "+8 this month",      up: true,  color: "green"  },
+    { label: "Total Revenue",     val: "₹" + fmt(s.totalRevenue),   Icon: TrendingUp, change: "All time high",      up: true,  color: "blue"   },
+  ], [s]);
 
-      {/* Live Bar */}
-      <div className="flex items-center gap-3 mb-4 p-3 bg-green-900/30 border border-green-500/20 rounded-lg">
-        <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-        <span className="text-sm font-semibold text-green-400">Live Dashboard</span>
-        <span className="text-xs text-gray-400">
-          — {s.activeTrips} trips · {s.driversOnline} drivers online
+  const LEGEND = [
+    { color: "#f97316", label: "Revenue" },
+    { color: "#10b981", label: "Profit" },
+    { color: "#ef4444", label: "Expenses" },
+  ];
+
+  const PENDING_ACTIONS = [
+    { Icon: FileText,      title: "POD Verification Pending",      sub: "8 trips awaiting delivery confirmation", urgent: true  },
+    { Icon: AlertTriangle, title: "Expense Approvals",             sub: "2 expenses pending review",              urgent: true  },
+    { Icon: Wrench,        title: "TN04 GH 3456 in Maintenance",   sub: "Service due since yesterday",            urgent: false },
+    { Icon: Clock,         title: "Invoice Generation",            sub: "3 completed trips, invoices not sent",   urgent: false },
+  ];
+
+  return (
+    <div className="p-5 bg-gray-900 min-h-screen text-white space-y-5">
+
+      {/* ── Live Bar ── */}
+      <div className="flex flex-wrap items-center gap-3 px-4 py-2.5
+        bg-green-500/5 border border-green-500/20 rounded-xl">
+        <span className="flex items-center gap-2">
+          <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse shrink-0" />
+          <Activity size={13} className="text-green-400" />
+          <span className="text-sm font-semibold text-green-400">Live Dashboard</span>
         </span>
-        <span className="ml-auto text-xs text-gray-400">
-          Jan 20, 2025 · 09:42 AM
+        <span className="text-xs text-gray-400">
+          — {s.activeTrips} trips in progress · {s.driversOnline} drivers online · Last updated just now
+        </span>
+        <span className="ml-auto text-xs text-gray-500 tabular-nums">
+          {dateStr} · {timeStr} IST
         </span>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-        {[
-          { label: "Active Trips", val: s.activeTrips, icon: "🚛" },
-          { label: "Drivers Online", val: s.driversOnline, icon: "👤" },
-          { label: "Revenue", val: "₹" + fmt(s.monthlyRevenue), icon: "💰" },
-          { label: "Fleet", val: s.fleetUtilization + "%", icon: "⚡" },
-        ].map((item) => (
-          <div key={item.label} className="bg-gray-800 p-4 rounded-xl border border-gray-700">
-            <div className="text-sm text-gray-400">{item.label}</div>
-            <div className="text-2xl font-bold mt-1">{item.val}</div>
-            <div className="text-xl mt-2">{item.icon}</div>
-          </div>
+      {/* ── Stat Cards ── */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 xl:grid-cols-8 gap-3">
+        {statCards.map((card) => (
+          <StatCard key={card.label} {...card} />
         ))}
       </div>
 
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+      {/* ── Charts Row 1 ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
 
-        {/* Line Chart */}
-        <div className="bg-gray-800 p-4 rounded-xl border border-gray-700 col-span-2">
-          <h2 className="text-sm font-semibold mb-2">Revenue Trend</h2>
-          <ResponsiveContainer width="100%" height={250}>
+        {/* Revenue Line Chart */}
+        <Card className="lg:col-span-2">
+          <SectionTitle aside="Last 6 months (INR)">Revenue & Profit Trend</SectionTitle>
+          <ResponsiveContainer width="100%" height={220}>
             <LineChart data={mockData.revenue}>
-              <CartesianGrid stroke="#374151" strokeDasharray="3 3" />
-              <XAxis dataKey="month" stroke="#9CA3AF" />
-              <YAxis stroke="#9CA3AF" />
-              <Tooltip />
-              <Line type="monotone" dataKey="revenue" stroke="#f97316" />
-              <Line type="monotone" dataKey="profit" stroke="#10b981" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+              <XAxis dataKey="month" tick={{ fill: "#9CA3AF", fontSize: 11 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: "#9CA3AF", fontSize: 11 }} axisLine={false} tickLine={false}
+                tickFormatter={(v) => "₹" + (v / 1000) + "k"} />
+              <Tooltip content={<RevTooltip />} />
+              <Line type="monotone" dataKey="revenue"  stroke="#f97316" strokeWidth={2.5} dot={false} />
+              <Line type="monotone" dataKey="profit"   stroke="#10b981" strokeWidth={2.5} dot={false} strokeDasharray="4 4" />
+              <Line type="monotone" dataKey="expenses" stroke="#ef4444" strokeWidth={1.5} dot={false} strokeDasharray="2 2" />
             </LineChart>
           </ResponsiveContainer>
-        </div>
+          <div className="flex gap-5 mt-2 justify-center">
+            {LEGEND.map(({ color, label }) => (
+              <span key={label} className="flex items-center gap-1.5 text-[11px] text-gray-400">
+                <span style={{ width: 14, height: 3, background: color, borderRadius: 2, display: "inline-block" }} />
+                {label}
+              </span>
+            ))}
+          </div>
+        </Card>
 
-        {/* Pie Chart */}
-        <div className="bg-gray-800 p-4 rounded-xl border border-gray-700">
-          <h2 className="text-sm font-semibold mb-2">Fleet Status</h2>
-          <ResponsiveContainer width="100%" height={250}>
+        {/* Fleet Pie */}
+        <Card>
+          <SectionTitle>Fleet Status</SectionTitle>
+          <ResponsiveContainer width="100%" height={160}>
             <PieChart>
-              <Pie data={mockData.fleetPie} dataKey="value">
-                {mockData.fleetPie.map((e, i) => (
-                  <Cell key={i} fill={e.color} />
-                ))}
+              <Pie data={mockData.fleetPie} cx="50%" cy="50%"
+                innerRadius={48} outerRadius={72} paddingAngle={3} dataKey="value">
+                {mockData.fleetPie.map((e, i) => <Cell key={i} fill={e.color} />)}
               </Pie>
-              <Tooltip />
+              <Tooltip {...CHART_TOOLTIP_STYLE} />
             </PieChart>
           </ResponsiveContainer>
-        </div>
+          <div className="space-y-2 mt-1">
+            {mockData.fleetPie.map((e) => (
+              <div key={e.name} className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span style={{ width: 8, height: 8, background: e.color, borderRadius: "50%", display: "inline-block" }} />
+                  <span className="text-xs text-gray-400">{e.name}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-16 h-1.5 bg-gray-700 rounded-full overflow-hidden">
+                    <div className="h-full rounded-full" style={{ width: (e.value / 47 * 100) + "%", background: e.color }} />
+                  </div>
+                  <span className="text-xs font-semibold text-white w-5 text-right">{e.value}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
       </div>
 
-      {/* Bottom Row */}
+      {/* ── Charts Row 2 + Live Trips ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
         {/* Bar Chart */}
-        <div className="bg-gray-800 p-4 rounded-xl border border-gray-700">
-          <h2 className="text-sm font-semibold mb-2">Weekly Trips</h2>
+        <Card>
+          <SectionTitle>Trip Volume — This Week</SectionTitle>
           <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={mockData.tripVolume}>
-              <CartesianGrid stroke="#374151" />
-              <XAxis dataKey="day" stroke="#9CA3AF" />
-              <YAxis stroke="#9CA3AF" />
-              <Tooltip />
-              <Bar dataKey="trips" fill="#f97316" />
+            <BarChart data={mockData.tripVolume} barSize={24}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#374151" vertical={false} />
+              <XAxis dataKey="day" tick={{ fill: "#9CA3AF", fontSize: 11 }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fill: "#9CA3AF", fontSize: 11 }} axisLine={false} tickLine={false} />
+              <Tooltip {...CHART_TOOLTIP_STYLE} cursor={{ fill: "rgba(255,255,255,0.04)" }} />
+              <Bar dataKey="trips" fill="#f97316" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
-        </div>
+        </Card>
 
         {/* Live Trips */}
-        <div className="bg-gray-800 p-4 rounded-xl border border-gray-700">
-          <h2 className="text-sm font-semibold mb-2">Live Trips</h2>
-          <div className="max-h-52 overflow-y-auto space-y-2">
+        <Card>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-semibold text-white">Live Trips</h2>
+            <span className="flex items-center gap-1.5 text-[11px] bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded-full">
+              <span className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-pulse" />
+              {s.activeTrips} Active
+            </span>
+          </div>
+          <div className="max-h-52 overflow-y-auto space-y-2 scrollbar-thin scrollbar-thumb-gray-700">
             {mockData.trips
               .filter((t) => t.status === "in_progress")
               .map((t) => (
-                <div key={t.id} className="p-2 bg-gray-700 rounded-lg">
-                  <div className="font-semibold text-sm">
-                    {t.from} → {t.to}
+                <div key={t.id} className="p-3 bg-gray-700/50 border border-gray-700/80 rounded-lg
+                  hover:bg-gray-700 transition-colors duration-150 group">
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center gap-2 text-sm font-semibold text-white">
+                      <MapPin size={12} className="text-orange-400 shrink-0" />
+                      {t.from}
+                      <span className="text-gray-500 text-xs">→</span>
+                      {t.to}
+                    </div>
+                    <span className="text-xs font-bold text-green-400">₹{fmt(t.freight)}</span>
                   </div>
-                  <div className="text-xs text-gray-400">
-                    🚛 {t.truck} | 👤 {t.driver}
-                  </div>
-                  <div className="text-xs text-green-400">
-                    ₹{fmt(t.freight)}
+                  <div className="flex gap-3 text-[11px] text-gray-400">
+                    <span className="flex items-center gap-1"><Truck size={10} /> {t.truck}</span>
+                    <span className="flex items-center gap-1"><Users size={10} /> {t.driver}</span>
+                    <span className="ml-auto text-gray-500">ETA {t.eta}</span>
                   </div>
                 </div>
               ))}
           </div>
-        </div>
-
+        </Card>
       </div>
 
+      {/* ── Bottom Row ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+        {/* Subscription Plans */}
+        <Card>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-semibold text-white">Subscription Plans</h2>
+            <span className="text-xs font-semibold text-orange-400">134 paying</span>
+          </div>
+          <div className="space-y-3">
+            {mockData.plans.map((p) => (
+              <div key={p.name} className="flex items-center justify-between">
+                <div>
+                  <div className="text-xs font-semibold text-white">{p.name}</div>
+                  <div className="text-[11px] text-gray-500">{p.trucks} · ₹{fmt(p.price)}/mo</div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-20 h-1.5 bg-gray-700 rounded-full overflow-hidden">
+                    <div className="h-full bg-orange-500 rounded-full transition-all duration-500"
+                      style={{ width: (p.customers / 134 * 100) + "%" }} />
+                  </div>
+                  <span className="text-xs font-bold text-white w-6 text-right">{p.customers}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        {/* Pending Actions */}
+        <Card>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-semibold text-white">Pending Actions</h2>
+            <span className="text-[11px] bg-red-500/10 text-red-400 border border-red-500/20 px-2 py-0.5 rounded-full font-semibold">
+              8 Urgent
+            </span>
+          </div>
+          <div className="space-y-0">
+            {PENDING_ACTIONS.map(({ Icon, title, sub, urgent }, i) => (
+              <div key={title}
+                className={`flex gap-3 py-2.5 ${i < PENDING_ACTIONS.length - 1 ? "border-b border-gray-700/60" : ""}`}>
+                <div className={`p-1.5 rounded-lg shrink-0 mt-0.5
+                  ${urgent ? "bg-red-500/10 text-red-400" : "bg-gray-700 text-gray-400"}`}>
+                  <Icon size={13} strokeWidth={2} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-semibold text-white truncate">{title}</span>
+                    {urgent && (
+                      <span className="shrink-0 text-[9px] font-bold bg-red-500/15 text-red-400 border border-red-500/20 px-1.5 py-0.5 rounded uppercase tracking-wide">
+                        Urgent
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-[11px] text-gray-500 mt-0.5">{sub}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+      </div>
     </div>
   );
 };

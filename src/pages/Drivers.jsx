@@ -200,78 +200,99 @@ const Drivers = () => {
       </div>
 
       {/* Table card */}
-      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden">
+      <div className="bg-gray-800 border border-gray-700 rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
+
+            {/* HEADER */}
             <thead>
-              <tr className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+              <tr className="border-b border-gray-700 bg-gray-800">
                 {["Driver", "License", "Assigned Truck", "Status", "Trips", "Rating", "Location", "Actions"].map((h) => (
                   <th
                     key={h}
-                    className="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider whitespace-nowrap"
+                    className="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wider whitespace-nowrap"
                   >
                     {h}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+
+            {/* BODY */}
+            <tbody className="divide-y divide-gray-700">
               {mockData.drivers.map((d) => (
-                <tr key={d.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                <tr
+                  key={d.id}
+                  className="hover:bg-gray-700 transition-colors"
+                >
+
                   {/* Driver */}
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       <Avatar name={d.name} size={34} />
                       <div>
-                        <div className="text-sm font-semibold text-gray-900 dark:text-white">{d.name}</div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">{d.phone}</div>
+                        <div className="text-sm font-semibold text-white">{d.name}</div>
+                        <div className="text-xs text-gray-400">{d.phone}</div>
                       </div>
                     </div>
                   </td>
 
                   {/* License */}
-                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300 whitespace-nowrap">{d.license}</td>
+                  <td className="px-4 py-3 text-sm text-gray-300 whitespace-nowrap">
+                    {d.license}
+                  </td>
 
                   {/* Truck */}
                   <td className="px-4 py-3">
                     {d.truck ? (
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-gray-700 text-gray-300 border border-gray-600">
                         {d.truck}
                       </span>
                     ) : (
-                      <span className="text-gray-400">—</span>
+                      <span className="text-gray-500">—</span>
                     )}
                   </td>
 
                   {/* Status */}
-                  <td className="px-4 py-3"><StatusBadge status={d.status} /></td>
+                  <td className="px-4 py-3">
+                    <StatusBadge status={d.status} />
+                  </td>
 
                   {/* Trips */}
-                  <td className="px-4 py-3 font-semibold text-gray-900 dark:text-white">{d.trips}</td>
+                  <td className="px-4 py-3 font-semibold text-white">
+                    {d.trips}
+                  </td>
 
                   {/* Rating */}
-                  <td className="px-4 py-3"><Rating val={d.rating} /></td>
+                  <td className="px-4 py-3">
+                    <Rating val={d.rating} />
+                  </td>
 
                   {/* Location */}
-                  <td className="px-4 py-3 text-sm text-gray-600 dark:text-gray-300 whitespace-nowrap">{d.city}</td>
+                  <td className="px-4 py-3 text-sm text-gray-300 whitespace-nowrap">
+                    {d.city}
+                  </td>
 
                   {/* Actions */}
                   <td className="px-4 py-3">
                     <div className="flex gap-1">
                       <button
                         onClick={() => setSelected(d)}
-                        className="px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/20 rounded-lg transition-colors"
+                        className="px-3 py-1.5 text-xs font-medium text-gray-300 hover:text-violet-400 hover:bg-violet-900/20 rounded-lg transition-colors"
                       >
                         View
                       </button>
-                      <button className="px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-300 hover:text-violet-600 dark:hover:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/20 rounded-lg transition-colors">
+
+                      <button className="px-3 py-1.5 text-xs font-medium text-gray-300 hover:text-violet-400 hover:bg-violet-900/20 rounded-lg transition-colors">
                         📱
                       </button>
                     </div>
                   </td>
+
                 </tr>
               ))}
             </tbody>
+
           </table>
         </div>
       </div>
